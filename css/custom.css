@@ -1,0 +1,85 @@
+body, tr  {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    text-align: center;
+}
+table  {
+    border-collapse: collapse;
+}
+
+tbody tr  {
+    border-top: 1pt solid black;
+}
+thead tr  {
+    cursor: pointer;
+}
+th {
+    font-weight:normal;
+    border-bottom: 2pt solid black;
+}
+button{
+    	  margin-top: 5px;
+}
+#logo-image  {
+    height: 75px;
+}
+.up {font-weight:bold;}
+.Add {
+	  margin-top: 2px;
+	  margin-bottom: 2px;  
+}
+ @media screen and (max-width: 1795px) and (min-width: 1655px)  {
+		.priority-1 {
+			display:none;
+		}
+	}	
+	@media screen and (max-width: 1655px) and (min-width: 1465px)  {
+		.priority-1, .priority-2 {
+			display:none;
+		}
+	}	
+	@media screen and (max-width: 1465px) and (min-width: 1415px)  {
+		.priority-1, .priority-2, .priority-3 {
+			display:none;
+		}
+	}	
+	@media screen and (max-width: 1415px)  and (min-width: 1195px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4 {
+			display:none;
+		}
+	}	
+	@media screen and (max-width: 1195px)  and (min-width: 955px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5  {
+			display:none;
+		}
+	}	
+	@media screen and (max-width: 955px)  and (min-width: 635px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6   {
+			display:none;
+		}
+	}
+	@media screen and (max-width: 635px)  and (min-width: 575px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6, .priority-7   {
+			display:none;
+		}
+	}
+	@media screen and (max-width: 575px)  and (min-width: 500px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6, .priority-7, .priority-8   {
+			display:none;
+		}
+	}
+	@media screen and (max-width: 500px)  and (min-width: 380px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6, .priority-7, .priority-8, .priority-9 {
+			display:none;
+		}
+	}
+	@media screen and (max-width: 380px)  and (min-width: 290px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6, .priority-7, .priority-8, .priority-9, .priority-10 {
+			display:none;
+		}
+	}
+	@media screen and (max-width: 290px)  {
+		.priority-1, .priority-2, .priority-3, .priority-4, .priority-5, .priority-6, .priority-7, .priority-8, .priority-9, .priority-10, .priority-11 {
+			display:none;
+		}
+	}

@@ -1,4 +1,3 @@
-
 /**
  * courses - an array - indicated by the opening and closing [ ]
  * 
@@ -8,7 +7,6 @@
  * This format is JSON or JAvaScript Object Notation - more info here https://www.w3schools.com/js/js_json_intro.asp
  * Line=0, Department=1, Number=2, Section=3, Title=4, Faculty=5, Openings=6, Capacity=7, Status=8, Day=9, StartTime=10, EndTime=11, Campus=12, Building=13, Room=14, Credits=15, StartDate=16, EndDate=17
  */
-
 let viewableRows=[1,2,3,4,5,9,10,11,13,14,15,16,17,8];
 let RowPriority =[12,12,3,5,4,9,10,8,2,6,7,1,1,11];
 let courses = [
@@ -27,81 +25,59 @@ function search(){
         generateTable(document.getElementById("sortable"), courses, document.getElementById("search").value);
     }else{
         generateTable(document.getElementById("sortable"), courses, "*");
-}}
+    }
+}
 function clickPress(event) {
     if (event.keyCode == 13) {
         search();
     }
 }
 function generateTableHead(table, data) {
-
-    // Create the thead part of the table
-    let thead = table.createTHead();
-
-    // Add a row to thead to hold the heading text
-    let row = thead.insertRow();
+    let thead = table.createTHead();// Create the thead part of the table
+    let row = thead.insertRow();// Add a row to thead to hold the heading text
     let headIndex=0;
     //console.log(data);
-    // Add the text to the table
-    for (let R of viewableRows) {
-        // key = capitalize(key);
-
+    for (let R of viewableRows) {// Add the text to the table
         let th = document.createElement("th");
         th.setAttribute("onclick", "sortBy("+headIndex + ")");
         th.setAttribute("id", headIndex);
         th.classList.add("priority-" + RowPriority[headIndex]);
         let text = document.createTextNode(data[R]);
-
         th.appendChild(text);
         row.appendChild(th);
-        headIndex+=1;
-    }
+        headIndex+=1;    }
         let th = document.createElement("th");
-
         th.appendChild(document.createTextNode("Add"));
-        row.appendChild(th);
-       
+        row.appendChild(th);       
 }
-// Generate the data
-function generateTable(table, data, searchStr) {
+function generateTable(table, data, searchStr) {// Generate the data
     //console.log(searchStr);
     let dat;
     if(searchStr !="*") dat= find(data, searchStr);else dat=data;
     //console.log(dat);
-    // Create the tbody as part of the table
-    let tbody = document.getElementById('tabBody');
+    let tbody = document.getElementById('tabBody');// Create the tbody as part of the table
     tbody.innerHTML='';
-    // Loop through the rows of data
-    for (let element of dat) {
-
-        // Create a new row in the tbody
-        let row = tbody.insertRow();
+    clearFormat();
+    for (let element of dat) {// Loop through the rows of data
+        let row = tbody.insertRow();// Create a new row in the tbody
         let headIndex=1;
-        // Loop through the data for the row
-        for (let R of viewableRows) {
-
-            // Create a cell in the row
-            let cell = row.insertCell();
+        for (let R of viewableRows) {// Loop through the data for the row
+            let cell = row.insertCell();// Create a cell in the row
             //console.log(element);
-            // Create a text node that has the cell content
-            let text = document.createTextNode(Object.values(element)[R]);
-
-            // Add the text content to the cell
-            cell.appendChild(text);
+            let text = document.createTextNode(Object.values(element)[R]);// Create a text node that has the cell content
+            cell.appendChild(text);// Add the text content to the cell
             cell.classList.add("priority-" + RowPriority[headIndex-1]);
             headIndex+=1;
             //console.log(cell.classList);
         }
-let cmd = "addCourse('" + Object.values(element)[1] + Object.values(element)[2] + Object.values(element)[3] + "')";
+        let cmd = "addCourse('" + Object.values(element)[1] + Object.values(element)[2] + Object.values(element)[3] + "')";
         row.insertCell().innerHTML="<input type='submit' value='Add' class='Add' onclick=" + cmd + ">";
     }
 }
-//To be implemented...
-function addCourse(courseCode){
+function addCourse(courseCode){//To be implemented...
     alert(courseCode);
 }
-//Finds text from data and returns listing if contains srch
-function find(data,srch){
+function find(data,srch){//Finds text from data and returns listing if contains srch
     let newArray=[];
     for (let element of data) {
         for (key in element) {
@@ -113,19 +89,11 @@ function find(data,srch){
     }
     return newArray;
 }
-// Pop up an alert on the page after the page and all stylesheets and images have loaded
-window.onload = (event) => {
-
-    // Create an annoying popup to show that we have access to the data in the courses JSON array
-    //alert(courses[5].Title);
-// Create the table header
-    let table = document.getElementById("sortable")        
+window.onload = (event) => {// Pop up an alert on the page after the page and all stylesheets and images have loaded
+    let table = document.getElementById("sortable")// Create the table header        
     let data = Object.keys(courses[0]);
     generateTableHead(table, data);
-
-    // Fill the data rows
-    generateTable(table, courses, "*");
+    generateTable(table, courses, "*");// Fill the data rows
 	document.getElementById("search").focus();
-    // Log a message to the console to show that you can use this for debugging purposes
-    console.log('The page is loaded. We are in the console');
+    console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
 };

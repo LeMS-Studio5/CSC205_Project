@@ -9,7 +9,6 @@ function sortBy(c) {
             arrTable[ro][co] = document.getElementById("sortable").rows[ro].cells[co].innerHTML;
         }
     }
-
     th = arrTable.shift(); // remove the header row from the array, and save it
     if (c !== cPrev) { // different column is clicked, so sort by the new column
         arrTable.sort(
@@ -21,22 +20,19 @@ function sortBy(c) {
                 }
             }
         );
-		if (cPrev > -1) document.getElementById(cPrev).classList.remove("up");
+		clearFormat();
     } else { // if the same column is clicked then reverse the array
         arrTable.reverse();
     }
-		//console.log(document.getElementById(c).classList);
-		document.getElementById(c).classList.toggle("up");
-        //if (document.getElementById(c).ClassList("class")== "down") document.getElementById(c).setAttribute("class", "up"); else document.getElementById(c).setAttribute("class", "down");
-    
+	document.getElementById(c).classList.toggle("up");
     cPrev = c; // save in previous c
-
     arrTable.unshift(th); // put the header back in to the array
-
-    // cycle through rows-columns placing values from the array back into the html table
-    for (ro=0; ro<rows; ro++) {
+    for (ro=0; ro<rows; ro++) {// cycle through rows-columns placing values from the array back into the html table
         for (co=0; co<columns; co++) {
             document.getElementById("sortable").rows[ro].cells[co].innerHTML = arrTable[ro][co];
         }
     }
+}
+function clearFormat(){
+    if (cPrev > -1) document.getElementById(cPrev).classList.remove("up");
 }

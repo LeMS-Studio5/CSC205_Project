@@ -6,13 +6,17 @@
             <!-- Add bootstrap and custom style sheets here -->
             <link rel="stylesheet" href="css/custom.css">
         </head>
-        <body>
+        <body id="bod" onload="getCourseData();">
+            <div id="overlayBack" onclick="hideOverlay()"></div>
             <img id="logo-image" src="images/geneva_logo.png" alt="Geneva Logo">
             <h1>Geneva Course Catalog</h1>
             <p>Search: <input type="text" id="search" onkeypress="clickPress(event)"> <button type='submit' onclick="search();">Search</button></p>
             <p>Advance search functions to be added later</p>
-            <table border='0' id="sortable" width="98%" align="center"><tbody id='tabBody'></tbody></table>
+            <h2 id='Loading'>Loading...</h2>
+            <table border='0' id="sortable" align="center"><tbody id='tabBody'></tbody></table>
+            <h2 id="noResults" class="Hide">There is no results that match that search</h2>
             <p id='copy'>Created by LeMS 2021</p>
+            <!-- iframe id="overlay"  width="95%" height="50%"> -->
             <script type="text/javascript" src="js/main.js"></script>
             <script src="js/sorttable.js"></script>
         </body>

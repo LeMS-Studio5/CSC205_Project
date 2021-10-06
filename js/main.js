@@ -9,6 +9,7 @@
  */
 let viewableRows=[1,2,3,4,5,9,10,11,13,14,15,16,17,8];
 let RowPriority =[12,12,3,5,4,9,10,8,2,6,7,1,1,11];
+let ifrm;
 let courses = [
     {"Line":81,"Department":"BUS","Number":344,"Section":1,"Title":"MANAGEMENT OF INFORMATION SYSTEMS","Faculty":"Richards, Gordon P.","Openings":2,"Capacity":30,"Status":"Open","Day":"MWF","StartTime":"1:25 PM","EndTime":"2:20 PM","Campus":" Main Campus","Building":" Science and Engineering","Room":" SE 341 Computer Science Lab","Credits":3,"Start Date":"8\/30\/2021","End Date":"12\/17\/2021\r\n"}
     ,{"Line":167,"Department":"CSC","Number":133,"Section":2,"Title":"SURVEY OF COMPUTER SCIENCE","Faculty":"Madeira, Scott","Openings":6,"Capacity":15,"Status":"Open","Day":"H","StartTime":"2:00 PM","EndTime":"4:50 PM","Campus":" Main Campus","Building":" Science and Engineering","Room":" SE 341 Computer Science Lab","Credits":0,"Start Date":"8\/30\/2021","End Date":"12\/17\/2021\r\n"}
@@ -26,6 +27,26 @@ function search(){
     }else{
         generateTable(document.getElementById("sortable"), courses, "*");
     }
+}
+function getCourseData(){
+    let http=new XMLHttpRequest();
+    http.open("GET", "https://csc205.cscprof.com/courses", true);
+    http.send();
+    http.onload = function() {
+        if (http.status >= 200 && http.status < 300) {
+         courses = JSON.parse(http.responseText);
+         //console.log(http.responseText);
+         //Department Number Section Title Faculty Day StartTime EndTime Building Room Credits Start Date End Date Status	
+         viewableRows=[2,3,4,5,6,10,11,12,14,15,16,17,18,9];
+        }
+        let table = document.getElementById("sortable");// Create the table header        
+        let data = Object.keys(courses[0]);
+        document.getElementById("Loading").classList.add("Hide");
+        generateTableHead(table, data);
+        generateTable(table, courses, "*");// Fill the data rows
+	    document.getElementById("search").focus();
+        console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
+    };
 }
 function clickPress(event) {
     if (event.keyCode == 13) {
@@ -46,9 +67,9 @@ function generateTableHead(table, data) {
         th.appendChild(text);
         row.appendChild(th);
         headIndex+=1;    }
-        let th = document.createElement("th");
-        th.appendChild(document.createTextNode("Add"));
-        row.appendChild(th);       
+    let th = document.createElement("th");
+    th.appendChild(document.createTextNode("Add"));
+    row.appendChild(th);       
 }
 function generateTable(table, data, searchStr) {// Generate the data
     //console.log(searchStr);
@@ -64,24 +85,39 @@ function generateTable(table, data, searchStr) {// Generate the data
         for (let R of viewableRows) {// Loop through the data for the row
             let cell = row.insertCell();// Create a cell in the row
             //console.log(element);
-            let text = document.createTextNode(Object.values(element)[R]);// Create a text node that has the cell content
-            cell.appendChild(text);// Add the text content to the cell
+            let text = formatText(Object.values(element)[R]);//document.createTextNode(formatText(Object.values(element)[R]));// Create a text node that has the cell content
+            cell.innerHTML=(text);// Add the text content to the cell
             cell.classList.add("priority-" + RowPriority[headIndex-1]);
             headIndex+=1;
             //console.log(cell.classList);
         }
-        let cmd = "addCourse('" + Object.values(element)[1] + Object.values(element)[2] + Object.values(element)[3] + "')";
+        let cmd = "addCourse('" + Object.values(element)[0] + "')";
         row.insertCell().innerHTML="<input type='submit' value='Add' class='Add' onclick=" + cmd + ">";
     }
+    if (document.getElementById("sortable").rows.length<2) document.getElementById("noResults").classList.remove("Hide");else document.getElementById("noResults").classList.add("Hide");
+}
+function formatText(txt){   //Format's time and Null
+    if (txt!=null && txt.toString().includes(":")){
+        return txt.toString().substring(0,5);
+    }else if (txt==null) return "NULL";
+    return txt;
 }
 function addCourse(courseCode){//To be implemented...
-    alert(courseCode);
+    ifrm = document.createElement("iframe");
+    ifrm.setAttribute("src","details.html?"+courseCode);
+    ifrm.setAttribute("id","overlay");
+    document.getElementById("bod").appendChild(ifrm)
+    document.getElementById("overlayBack").style.display = "block";
+}
+function hideOverlay(el){
+    document.getElementById("overlayBack").style.display = "none";
+    ifrm.parentNode.removeChild(ifrm);
 }
 function find(data,srch){//Finds text from data and returns listing if contains srch
     let newArray=[];
     for (let element of data) {
         for (key in element) {
-            if (element[key].toString().includes(srch)){
+            if (element[key]!=null && element[key].toString().toUpperCase().includes(srch.toUpperCase())){
                 newArray.push(element);
                 break;
             }
@@ -89,11 +125,17 @@ function find(data,srch){//Finds text from data and returns listing if contains 
     }
     return newArray;
 }
-window.onload = (event) => {// Pop up an alert on the page after the page and all stylesheets and images have loaded
-    let table = document.getElementById("sortable")// Create the table header        
-    let data = Object.keys(courses[0]);
-    generateTableHead(table, data);
-    generateTable(table, courses, "*");// Fill the data rows
-	document.getElementById("search").focus();
-    console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
-};
+function loadDetails(){
+    let http=new XMLHttpRequest();
+    let results;
+    http.open("GET", "https://csc205.cscprof.com/courses/"+ location.search.substring(1), true);
+    http.send();
+    http.onload = function() {
+        if (http.status >= 200 && http.status < 300) {
+            //document.getElementById("info").innerHTML=(http.responseText);
+            results=JSON.parse(http.response);
+    document.getElementById("code").innerHTML=results.Department+" "+results.Number;//Object.values(results);
+    //document.getElementById("code").innerHTML=Object.values(results);
+        }
+    };
+}

@@ -138,4 +138,4 @@ function loadDetails(){
     //document.getElementById("code").innerHTML=Object.values(results);
         }
     };
-}
+} 

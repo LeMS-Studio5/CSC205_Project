@@ -46,6 +46,7 @@ function getCourseData(){
         generateTable(table, courses, "*");// Fill the data rows
 	    document.getElementById("search").focus();
         console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
+		//console.log(Object.values(courses));
     };
 }
 function clickPress(event) {
@@ -116,8 +117,11 @@ function hideOverlay(el){
 function find(data,srch){//Finds text from data and returns listing if contains srch
     let newArray=[];
     for (let element of data) {
+		if (srch.includes(":") && advanceSearch(element, srch.substring(srch.indexOf(":"))[1])){
+			newArray.push(element);
+		}
         for (key in element) {
-            if (element[key]!=null && element[key].toString().toUpperCase().includes(srch.toUpperCase())){
+            if (element[key]!=null && (element[key].toString().toUpperCase().includes(srch.toUpperCase()))){
                 newArray.push(element);
                 break;
             }
@@ -125,6 +129,24 @@ function find(data,srch){//Finds text from data and returns listing if contains 
     }
     return newArray;
 }
+function searchThruByIndex(el, srch, index){
+	if (el!=null && element[index].toString().toUpperCase().includes(srch.toUpperCase())){
+		return true;
+	}
+	return false;
+}
+function advanceSearch(el, srch){
+	if (srch == null) return false;
+	if (srch.startsWith("PROF")){
+		return searchThruByIndex(el, srch, 6);
+	}else if (srch.startsWith("DAY")){
+		return searchThruByIndex(el, srch, 10);
+	}else if (srch.startsWith("DEPT")){
+		return searchThruByIndex(el, srch, 2);
+	}
+	return false;
+}
+//id=0, Line=1, Department=2, Number=3, Section=4, Title=5, Faculty=6, Openings=7, Capacity=8, Status=9. Day=10, StartTime=11, EndTime=12, Campus=13, Building=14, Room=15, Credits=16, Start Date=17, End Date=18, Rating=19
 function loadDetails(){
     let http=new XMLHttpRequest();
     let results;

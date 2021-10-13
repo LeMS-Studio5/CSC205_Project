@@ -29,7 +29,7 @@ function search(){
     }
 }
 function getCourseData(){
-    let http=new XMLHttpRequest();
+    http=new XMLHttpRequest();
     http.open("GET", "https://csc205.cscprof.com/courses", true);
     http.send();
     http.onload = function() {
@@ -46,6 +46,7 @@ function getCourseData(){
         generateTable(table, courses, "*");// Fill the data rows
 	    document.getElementById("search").focus();
         console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
+		//console.log(Object.values(courses));
     };
 }
 function clickPress(event) {
@@ -97,7 +98,7 @@ function generateTable(table, data, searchStr) {// Generate the data
     if (document.getElementById("sortable").rows.length<2) document.getElementById("noResults").classList.remove("Hide");else document.getElementById("noResults").classList.add("Hide");
 }
 function formatText(txt){   //Format's time and Null
-    if (txt!=null && txt.toString().includes(":")){
+    if (txt!=null && txt.toString().includes(":") && txt.length==12){
         return txt.toString().substring(0,5);
     }else if (txt==null) return "NULL";
     return txt;
@@ -116,6 +117,9 @@ function hideOverlay(el){
 function find(data,srch){//Finds text from data and returns listing if contains srch
     let newArray=[];
     for (let element of data) {
+        if (srch.includes(":") && advanceSearch(element, srch)){
+			newArray.push(element);
+		}
         for (key in element) {
             if (element[key]!=null && element[key].toString().toUpperCase().includes(srch.toUpperCase())){
                 newArray.push(element);
@@ -125,17 +129,43 @@ function find(data,srch){//Finds text from data and returns listing if contains 
     }
     return newArray;
 }
+function searchThruByIndex(el, srch, index){
+	if (Object.values(el)[index].toString().toUpperCase().includes(srch.toUpperCase())){
+		return true;
+	}
+	return false;
+}
+function advanceSearch(el, srch){
+    //console.log(srch);
+    let prop=srch.substring(srch.indexOf(":")+1);
+	if (srch == null) return false;
+	if (srch.startsWith("PROF")){
+		return searchThruByIndex(el, prop, 6);
+	}else if (srch.startsWith("DAY")){
+		return searchThruByIndex(el, prop, 10);
+	}else if (srch.startsWith("DEPT")){
+		return searchThruByIndex(el, prop, 2);
+	}
+	return false;
+}
+//id=0, Line=1, Department=2, Number=3, Section=4, Title=5, Faculty=6, Openings=7, Capacity=8, Status=9. Day=10, StartTime=11, EndTime=12, Campus=13, Building=14, Room=15, Credits=16, Start Date=17, End Date=18, Rating=19
 function loadDetails(){
     let http=new XMLHttpRequest();
     let results;
-    http.open("GET", "https://csc205.cscprof.com/courses/"+ location.search.substring(1), true);
+    let courseIndex=502;
+    if (location.search.length>1) courseIndex=location.search.substring(1);
+    http.open("GET", "https://csc205.cscprof.com/courses/"+ courseIndex, true);
     http.send();
     http.onload = function() {
         if (http.status >= 200 && http.status < 300) {
             //document.getElementById("info").innerHTML=(http.responseText);
             results=JSON.parse(http.response);
-    document.getElementById("code").innerHTML=results.Department+" "+results.Number;//Object.values(results);
-    //document.getElementById("code").innerHTML=Object.values(results);
+    document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+  results.Building + " "+ results.Room.split(' ')[2]+".";//Object.values(results);
+    /*document.getElementById("section").innerHTML=results.Section;
+    document.getElementById("room").innerHTML=results.Room;
+    document.getElementById("prof").innerHTML=results.Faculty;
+    //document.getElementById("prof2").innerHTML=Object.values(results);
+    //document.getElementById("prof2").innerHTML=Object.values(results);*/
         }
     };
-} 
+}

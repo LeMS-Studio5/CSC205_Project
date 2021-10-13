@@ -11,7 +11,12 @@
             <img id="logo-image" src="images/geneva_logo.png" alt="Geneva Logo">
             <h1>Geneva Course Catalog</h1>
             <p>Search: <input type="text" id="search" onkeypress="clickPress(event)"> <button type='submit' onclick="search();">Search</button></p>
-            <p>Advance search functions to be added later</p>
+            <form>
+                <input type="checkbox">Advance Search
+                <div id="advance">
+                    <input type="text" placeholder="Course Code (ACC 151)"pattern="[a-z]{3,3}">                    
+                </div>
+            </form><!--p>Advance search functions to be added later</p>-->
             <h2 id='Loading'>Loading...</h2>
             <table border='0' id="sortable" align="center"><tbody id='tabBody'></tbody></table>
             <h2 id="noResults" class="Hide">There is no results that match that search</h2>

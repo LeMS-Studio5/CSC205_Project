@@ -121,7 +121,7 @@ function find(data,srch){//Finds text from data and returns listing if contains 
 			newArray.push(element);
 		}
         for (key in element) {
-            if (element[key]!=null && element[key].toString().toUpperCase().includes(srch.toUpperCase())){
+            if (element[key]!=null && (element[key].toString().toUpperCase().includes(srch.toUpperCase()))){
                 newArray.push(element);
                 break;
             }

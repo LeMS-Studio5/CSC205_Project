@@ -130,7 +130,7 @@ function find(data,srch){//Finds text from data and returns listing if contains 
     return newArray;
 }
 function searchThruByIndex(el, srch, index){
-	if (Object.values(el)[index].toString().toUpperCase().includes(srch.toUpperCase())){
+	if (Object.values(el)[index] != null && Object.values(el)[index].toString().toUpperCase().includes(srch.toUpperCase().trim())){
 		return true;
 	}
 	return false;
@@ -138,13 +138,18 @@ function searchThruByIndex(el, srch, index){
 function advanceSearch(el, srch){
     //console.log(srch);
     let prop=srch.substring(srch.indexOf(":")+1);
-	if (srch == null) return false;
+	//console.log(el);
+	if (srch == null || el==null) return false;
 	if (srch.startsWith("PROF")){
 		return searchThruByIndex(el, prop, 6);
 	}else if (srch.startsWith("DAY")){
 		return searchThruByIndex(el, prop, 10);
 	}else if (srch.startsWith("DEPT")){
 		return searchThruByIndex(el, prop, 2);
+	}else if (srch.startsWith("ROOM")){
+		return searchThruByIndex(el, prop, 15);
+	}else if (srch.startsWith("TIME")){
+		return searchThruByIndex(el, prop, 11) || searchThruByIndex(el, prop, 12);
 	}
 	return false;
 }

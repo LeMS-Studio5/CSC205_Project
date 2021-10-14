@@ -54,23 +54,29 @@ function clickPress(event) {
         search();
     }
 }
-function generateTableHead(table, data) {
+function generateTableHeadArray(table, heads, sortable) {
     let thead = table.createTHead();// Create the thead part of the table
     let row = thead.insertRow();// Add a row to thead to hold the heading text
     let headIndex=0;
     //console.log(data);
-    for (let R of viewableRows) {// Add the text to the table
+    for (let R of heads) {// Add the text to the table
+        //console.log(R);
         let th = document.createElement("th");
-        th.setAttribute("onclick", "sortBy("+headIndex + ")");
+        if (sortable)th.setAttribute("onclick", "sortBy("+headIndex + ")");
         th.setAttribute("id", headIndex);
-        th.classList.add("priority-" + RowPriority[headIndex]);
-        let text = document.createTextNode(data[R]);
+        if (sortable) th.classList.add("priority-" + RowPriority[headIndex]);
+        let text = document.createTextNode(R);
         th.appendChild(text);
         row.appendChild(th);
-        headIndex+=1;    }
-    let th = document.createElement("th");
-    th.appendChild(document.createTextNode("Add"));
-    row.appendChild(th);       
+        headIndex+=1;    }   
+}
+function generateTableHead(table, data) {
+    let A=[];
+    for (let R of viewableRows) {
+        A.push(data[R]);
+    }
+    A.push("Details");
+    generateTableHeadArray(table,A,true);
 }
 function generateTable(table, data, searchStr) {// Generate the data
     //console.log(searchStr);
@@ -93,7 +99,8 @@ function generateTable(table, data, searchStr) {// Generate the data
             //console.log(cell.classList);
         }
         let cmd = "addCourse('" + Object.values(element)[0] + "')";
-        row.insertCell().innerHTML="<input type='submit' value='Add' class='Add' onclick=" + cmd + ">";
+        console.log(element.Title+ element.id);
+        row.insertCell().innerHTML="<input type='submit' value='Details' class='Add' onclick=" + cmd + ">";
     }
     if (document.getElementById("sortable").rows.length<2) document.getElementById("noResults").classList.remove("Hide");else document.getElementById("noResults").classList.add("Hide");
 }
@@ -165,12 +172,74 @@ function loadDetails(){
         if (http.status >= 200 && http.status < 300) {
             //document.getElementById("info").innerHTML=(http.responseText);
             results=JSON.parse(http.response);
-    document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+  results.Building + " "+ results.Room.split(' ')[2]+".";//Object.values(results);
-    /*document.getElementById("section").innerHTML=results.Section;
-    document.getElementById("room").innerHTML=results.Room;
-    document.getElementById("prof").innerHTML=results.Faculty;
-    //document.getElementById("prof2").innerHTML=Object.values(results);
+    document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+ " " + results.Room + " on "+ results.Campus;//Object.values(results);
+    document.getElementById("Title").innerHTML=results.Title;
+    document.getElementById("time").innerHTML="This class meets "+ getDays(results.Day) + " from " + formatText(results.StartTime) + " to " + formatText(results.EndTime);
+    document.getElementById("credits").innerHTML=results.Credits + " Credit (s)";
+    document.getElementById("rate").innerHTML=""+ results.Rating+ " out of 5 Rating";
+    document.getElementById("rate").style.background="linear-gradient(90deg, rgb(200,200,200) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(130,130,130) 20%)";
+    document.getElementById("fillTXT").innerHTML=""+ results.Openings+ " out of "+ results.Capacity + " seats avalible";
+    document.getElementById("fill").style.background="linear-gradient(90deg, rgb(130,130,130) " + (100-((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(200,200,200) 00%)";
     //document.getElementById("prof2").innerHTML=Object.values(results);*/
+    generateSched(results);
         }
     };
 }
+function getDays(days){
+    let str="", t ="";
+    for (let d of days){
+        if (d=="M") t="Monday";
+        if (d=="T") t="Tuesday";
+        if (d=="W") t="Wednesday";
+        if (d=="H") t="Thursday";
+        if (d=="F") t="Friday";
+        str += t+ ", "
+    }
+    return replaceLast(str.slice(0,-2),","," and");
+}
+function replaceLast(string, oldPhrase, newPhrase) {
+    let lastIndex = string.lastIndexOf(oldPhrase);    
+    if (lastIndex == -1)return string;
+    return string.substring(0, lastIndex) + newPhrase + string.substring(lastIndex + oldPhrase.length);
+}
+function generateSched(course) {
+    let schedtable = document.getElementById('schedTab');// Create the tbody as part of the table
+    let days = ["Time","Monday","Tuesday","Wednesday","Thursday","Friday"];
+    let D=["","M","T","W","H","F"]
+    generateTableHeadArray(schedtable,days, false);
+    for (let i = 450; i < 1320; i += 5) {// Loop through the rows of data
+        let row = schedtable.insertRow();// Create a new row in the tbody
+        if (i%60==0){
+            let timeCell = row.insertCell();
+            timeCell.rowSpan="12";
+            timeCell.innerHTML=Math.floor(i/60).toString().padStart(2,"0") + ":00";
+            timeCell.classList.add("oclock");
+        }else if (i==450){
+            let timeCell = row.insertCell();
+            timeCell.rowSpan="6";
+        }
+        for (let j = 1 ; j < 6; j++) {// Loop through the data for the row
+            let cell = row.insertCell();// Create a cell in the row
+            //cell.innerHTML=days[j] + " " + Math.floor(i/60).toString().padStart(2,"0") + ":" + (i%60).toString().padEnd(2,"0");//(text);// Add the text content to the cell
+            cell.id = D[j].substring(0,1) + Math.floor(i/60).toString().padStart(2,"0") + (i%60).toString().padStart(2,"0");//days[j] + i;
+            //console.log(days[j] + i);
+            if (i%60 ==0) cell.classList.add("oclock");
+        }
+    }
+    for (let d of course.Day){
+        let curHour=parseInt(course.StartTime.substring(0,2));
+        let CurMin=parseInt(course.StartTime.substring(3,5));
+        let ETime = course.EndTime.substring(0,2) + course.EndTime.substring(3,5);
+        do{
+            //console.log(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0"));
+            document.getElementById(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")).classList.toggle("sched");
+            CurMin +=5;
+            if (CurMin==60){
+                CurMin=0;
+                curHour++;
+            }
+            //console.log(curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")+ "|" + ETime);
+        }while(curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")!= ETime)
+         }
+         console.log(course);
+    }

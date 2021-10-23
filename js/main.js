@@ -175,13 +175,14 @@ function loadDetails(){
     document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+ " " + results.Room + " on "+ results.Campus;//Object.values(results);
     document.getElementById("Title").innerHTML=results.Title;
     document.getElementById("time").innerHTML="This class meets "+ getDays(results.Day) + " from " + formatText(results.StartTime) + " to " + formatText(results.EndTime);
-    document.getElementById("credits").innerHTML=results.Credits + " Credit (s)";
+    if (results.Credits==1) document.getElementById("credits").innerHTML=results.Credits + " Credit"; else document.getElementById("credits").innerHTML=results.Credits + " Credits";
     document.getElementById("rate").innerHTML=""+ results.Rating+ " out of 5 Rating";
     document.getElementById("rate").style.background="linear-gradient(90deg, rgb(200,200,200) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(130,130,130) 20%)";
     document.getElementById("fillTXT").innerHTML=""+ results.Openings+ " out of "+ results.Capacity + " seats avalible";
     document.getElementById("fill").style.background="linear-gradient(90deg, rgb(130,130,130) " + (100-((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(200,200,200) 00%)";
     //document.getElementById("prof2").innerHTML=Object.values(results);*/
     generateSched(results);
+    document.getElementById("bod").classList.remove("Hide");
         }
     };
 }

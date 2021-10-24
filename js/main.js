@@ -179,7 +179,7 @@ function loadDetails(){
     document.getElementById("rate").innerHTML=""+ results.Rating+ " out of 5 Rating";
     document.getElementById("rate").style.background="linear-gradient(90deg, rgb(184,107,43) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(136,86,46) 20%)";
     if (results.Openings>0) document.getElementById("fillTXT").innerHTML=""+ results.Openings+ " out of "+ results.Capacity + " seats avalible";else document.getElementById("fillTXT").innerHTML="This course is full";
-    document.getElementById("fillTXT").style.background="linear-gradient(90deg, rgb(184,107,43) " + (100-((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(136,86,46) 00%)";
+    document.getElementById("fillTXT").style.background="linear-gradient(90deg, rgb(184,107,43) " + (((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(136,86,46) 00%)";
     document.getElementById("startDay").innerHTML=getMonth(results["Start Date"].split('-')[1]) + " "+ getEnd(results["Start Date"].split('-')[2]) + ", " + results["Start Date"].split('-')[0];
     document.getElementById("endDay").innerHTML=getMonth(results["End Date"].split('-')[1]) + " "+ getEnd(results["End Date"].split('-')[2]) + ", " + results["End Date"].split('-')[0];
     //document.getElementById("prof2").innerHTML=Object.values(results);*/

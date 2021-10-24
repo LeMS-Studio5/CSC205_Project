@@ -174,17 +174,39 @@ function loadDetails(){
             results=JSON.parse(http.response);
     document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+ " " + results.Room + " on "+ results.Campus;//Object.values(results);
     document.getElementById("Title").innerHTML=results.Title;
-    document.getElementById("time").innerHTML="This class meets "+ getDays(results.Day) + " from " + formatText(results.StartTime) + " to " + formatText(results.EndTime);
+    document.getElementById("time").innerHTML="Meets "+ getDays(results.Day) + " from " + formatText(results.StartTime) + " to " + formatText(results.EndTime);
     if (results.Credits==1) document.getElementById("credits").innerHTML=results.Credits + " Credit"; else document.getElementById("credits").innerHTML=results.Credits + " Credits";
     document.getElementById("rate").innerHTML=""+ results.Rating+ " out of 5 Rating";
-    document.getElementById("rate").style.background="linear-gradient(90deg, rgb(200,200,200) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(130,130,130) 20%)";
-    document.getElementById("fillTXT").innerHTML=""+ results.Openings+ " out of "+ results.Capacity + " seats avalible";
-    document.getElementById("fill").style.background="linear-gradient(90deg, rgb(130,130,130) " + (100-((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(200,200,200) 00%)";
+    document.getElementById("rate").style.background="linear-gradient(90deg, rgb(184,107,43) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(136,86,46) 20%)";
+    if (results.Openings>0) document.getElementById("fillTXT").innerHTML=""+ results.Openings+ " out of "+ results.Capacity + " seats avalible";else document.getElementById("fillTXT").innerHTML="This course is full";
+    document.getElementById("fillTXT").style.background="linear-gradient(90deg, rgb(184,107,43) " + (100-((parseInt(results.Openings)/parseInt(results.Capacity))*100)) +"%, rgb(136,86,46) 00%)";
+    document.getElementById("startDay").innerHTML=getMonth(results["Start Date"].split('-')[1]) + " "+ getEnd(results["Start Date"].split('-')[2]) + ", " + results["Start Date"].split('-')[0];
+    document.getElementById("endDay").innerHTML=getMonth(results["End Date"].split('-')[1]) + " "+ getEnd(results["End Date"].split('-')[2]) + ", " + results["End Date"].split('-')[0];
     //document.getElementById("prof2").innerHTML=Object.values(results);*/
     generateSched(results);
     document.getElementById("bod").classList.remove("Hide");
         }
     };
+}
+function getEnd(number){
+    if (number.last=="1") return number + "st";
+    if (number.last=="2") return number + "nd";
+    if (number.last=="3") return number + "rd";
+    return number + "th";
+}
+function getMonth(d){
+    if (d=="01") return "January";
+    if (d=="02") return "February";
+    if (d=="03") return "March";
+    if (d=="04") return "April";
+    if (d=="05") return "May";
+    if (d=="06") return "June";
+    if (d=="07") return "July";
+    if (d=="08") return "August";
+    if (d=="09") return "September";
+    if (d=="10") return "October";
+    if (d=="11") return "November";
+    if (d=="12") return "December";
 }
 function getDays(days){
     let str="", t ="";
@@ -208,16 +230,13 @@ function generateSched(course) {
     let days = ["Time","Monday","Tuesday","Wednesday","Thursday","Friday"];
     let D=["","M","T","W","H","F"]
     generateTableHeadArray(schedtable,days, false);
-    for (let i = 450; i < 1320; i += 5) {// Loop through the rows of data
+    for (let i = 420; i < 1320; i += 5) {// Loop through the rows of data
         let row = schedtable.insertRow();// Create a new row in the tbody
         if (i%60==0){
             let timeCell = row.insertCell();
             timeCell.rowSpan="12";
             timeCell.innerHTML=Math.floor(i/60).toString().padStart(2,"0") + ":00";
             timeCell.classList.add("oclock");
-        }else if (i==450){
-            let timeCell = row.insertCell();
-            timeCell.rowSpan="6";
         }
         for (let j = 1 ; j < 6; j++) {// Loop through the data for the row
             let cell = row.insertCell();// Create a cell in the row

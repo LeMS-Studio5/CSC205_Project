@@ -23,9 +23,9 @@ let courses = [
 ]
 function search(){
     if (document.getElementById("search").value !=""){
-        generateTable(document.getElementById("sortable"), courses, document.getElementById("search").value);
+        generateTable(document.getElementById("sortable"), courses, document.getElementById("search").value,  document.getElementById("hideFull").checked);
     }else{
-        generateTable(document.getElementById("sortable"), courses, "*");
+        generateTable(document.getElementById("sortable"), courses, "*",  document.getElementById("hideFull").checked);
     }
 }
 function getCourseData(){
@@ -43,7 +43,7 @@ function getCourseData(){
         let data = Object.keys(courses[0]);
         document.getElementById("Loading").classList.add("Hide");
         generateTableHead(table, data);
-        generateTable(table, courses, "*");// Fill the data rows
+        generateTable(table, courses, "*",  document.getElementById("hideFull").checked);// Fill the data rows
 	    document.getElementById("search").focus();
         console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
 		//console.log(Object.values(courses));
@@ -78,7 +78,10 @@ function generateTableHead(table, data) {
     A.push("Details");
     generateTableHeadArray(table,A,true);
 }
-function generateTable(table, data, searchStr) {// Generate the data
+function hideSearch() {
+	document.getElementById("advance").classList.toggle("Hide");
+}
+function generateTable(table, data, searchStr, hideFull) {// Generate the data
     //console.log(searchStr);
     let dat;
     if(searchStr !="*") dat= find(data, searchStr);else dat=data;
@@ -87,20 +90,22 @@ function generateTable(table, data, searchStr) {// Generate the data
     tbody.innerHTML='';
     clearFormat();
     for (let element of dat) {// Loop through the rows of data
-        let row = tbody.insertRow();// Create a new row in the tbody
-        let headIndex=1;
-        for (let R of viewableRows) {// Loop through the data for the row
-            let cell = row.insertCell();// Create a cell in the row
-            //console.log(element);
-            let text = formatText(Object.values(element)[R]);//document.createTextNode(formatText(Object.values(element)[R]));// Create a text node that has the cell content
-            cell.innerHTML=(text);// Add the text content to the cell
-            cell.classList.add("priority-" + RowPriority[headIndex-1]);
-            headIndex+=1;
-            //console.log(cell.classList);
-        }
-        let cmd = "addCourse('" + Object.values(element)[0] + "')";
-        console.log(element.Title+ element.id);
-        row.insertCell().innerHTML="<input type='submit' value='Details' class='Add' onclick=" + cmd + ">";
+    	if (!(hideFull && element.Status=="Full")){
+        	let row = tbody.insertRow();// Create a new row in the tbody
+	        let headIndex=1;
+    	    for (let R of viewableRows) {// Loop through the data for the row
+            	let cell = row.insertCell();// Create a cell in the row
+	            //console.log(element);
+    	        let text = formatText(Object.values(element)[R]);//document.createTextNode(formatText(Object.values(element)[R]));// Create a text node that has the cell content
+	            cell.innerHTML=(text);// Add the text content to the cell
+	            cell.classList.add("priority-" + RowPriority[headIndex-1]);
+	            headIndex+=1;
+	            //console.log(cell.classList);
+	        }
+	        let cmd = "addCourse('" + Object.values(element)[0] + "')";
+	        //console.log(element.Title+ element.id);
+	        row.insertCell().innerHTML="<input type='submit' value='Details' class='Add' onclick=" + cmd + ">";
+		}
     }
     if (document.getElementById("sortable").rows.length<2) document.getElementById("noResults").classList.remove("Hide");else document.getElementById("noResults").classList.add("Hide");
 }

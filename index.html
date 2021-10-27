@@ -11,10 +11,14 @@
             <img id="logo-image" src="images/geneva_logo.png" alt="Geneva Logo">
             <h1>Geneva Course Catalog</h1>
             <p>Search: <input type="text" id="search" onkeypress="clickPress(event)"> <button type='submit' onclick="search();">Search</button></p>
-            <form class="Hide">
-                <input type="checkbox">Advance Search
-                <div id="advance">
-                    <input type="text" placeholder="Course Code (ACC 151)"pattern="[a-z]{3,3}">                    
+            <form>
+				<input type="checkbox" id="hideFull" onchange="search()"> Hide Full Courses
+                <input type="checkbox" id="advnSrch" onchange="hideSearch()"> Advance Search
+                <div id="advance" class="Hide">
+                    <input type="text" id="courseCode" placeholder="Course Code (ACC 151)">
+                    <input type="text" id="prof" placeholder="Professor (Gordon Richards)">
+                    <input type="text" id="day" placeholder="Days (MWF)">
+                    <input type="text" id="room" placeholder="Room (SE 317)">
                 </div>
             </form><!--p>Advance search functions to be added later</p>-->
             <h2 id='Loading'>Loading...</h2>

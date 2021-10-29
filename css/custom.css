@@ -1,3 +1,4 @@
+/*https://medium.com/geekculture/css-only-digital-clock-accurate-settable-animated-c7610ddd26d9*/
 body, tr  {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
@@ -65,6 +66,12 @@ button{
 	height:20px;
 	margin: auto;
     font-weight:bolder;
+}
+#resultCount {
+	text-align: left;
+	font-family: Times;
+	padding-left:20px;
+	font-size:15px;
 }
 .Hide {
 	display: none;

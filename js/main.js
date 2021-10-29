@@ -108,6 +108,11 @@ function generateTable(table, data, searchStr, hideFull) {// Generate the data
 		}
     }
     if (document.getElementById("sortable").rows.length<2) document.getElementById("noResults").classList.remove("Hide");else document.getElementById("noResults").classList.add("Hide");
+resultCount();
+}
+function resultCount(){
+	let re=document.getElementById("sortable").rows.length-1;
+	if (re==1)document.getElementById("resultCount").innerHTML= re +" Result";else document.getElementById("resultCount").innerHTML= re +" Results";
 }
 function formatText(txt){   //Format's time and Null
     if (txt!=null && txt.toString().includes(":") && txt.length==12){

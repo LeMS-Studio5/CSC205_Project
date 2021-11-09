@@ -26,11 +26,11 @@ button{
     height: 70px; 
 }
 #overlay{
-	width: 75%;
+	width: 86%;
 	position: fixed;
-	top:15%;
-	left:15%;
-	height: 75%;
+	top:7%;
+	left:7%;
+	height: 86%;
 	background-color: white;
 	border: 0;
 	opacity: 1;
@@ -72,6 +72,13 @@ button{
 	font-family: Times;
 	padding-left:20px;
 	font-size:15px;
+}
+#advance {
+	width: 50%;
+	margin: auto;
+}
+#advTBL button{
+	margin:5px;
 }
 .Hide {
 	display: none;

@@ -28,6 +28,17 @@ function search(){
         generateTable(document.getElementById("sortable"), courses, "*",  document.getElementById("hideFull").checked);
     }
 }
+function aSearch(){
+    let srch="";
+    if (document.getElementById("courseCode").value!="")srch+="CODE:"+ document.getElementById("courseCode").value + " && ";
+    if (document.getElementById("prof").value!="")srch+="PROF:"+ document.getElementById("prof").value + " && ";
+    if (document.getElementById("day").value!="")srch+="DAY:"+ document.getElementById("day").value + " && ";
+    if (document.getElementById("room").value!="")srch+="ROOM:"+ document.getElementById("room").value + " && ";
+    srch=srch.slice(0,srch.length-4);
+    document.getElementById("search").value=srch;
+    if (srch=="") search();else
+    generateTable(document.getElementById("sortable"), courses, srch,  document.getElementById("hideFull").checked);
+}
 function getCourseData(){
     http=new XMLHttpRequest();
     http.open("GET", "https://csc205.cscprof.com/courses", true);
@@ -80,6 +91,7 @@ function generateTableHead(table, data) {
 }
 function hideSearch() {
 	document.getElementById("advance").classList.toggle("Hide");
+    if (document.getElementById("advnSrch").value) document.getElementById("courseCode").focus();
 }
 function generateTable(table, data, searchStr, hideFull) {// Generate the data
     //console.log(searchStr);
@@ -152,23 +164,31 @@ function searchThruByIndex(el, srch, index){
 	}
 	return false;
 }
-function advanceSearch(el, srch){
-    //console.log(srch);
-    let prop=srch.substring(srch.indexOf(":")+1);
-	//console.log(el);
+function advanceSearch(el, s){
+    let t=0,sArray=s.split("&&");
+    for(srch of sArray){
+    srch=reverse(reverse(srch).trim()).trim();
+    let prop=srch.substring(srch.indexOf(":")+1), r=false;
 	if (srch == null || el==null) return false;
 	if (srch.startsWith("PROF")){
-		return searchThruByIndex(el, prop, 6);
+        //console.log(prop);
+		r=searchThruByIndex(el, prop, 6);
 	}else if (srch.startsWith("DAY")){
-		return searchThruByIndex(el, prop, 10);
+		r=searchThruByIndex(el, prop, 10);
 	}else if (srch.startsWith("DEPT")){
-		return searchThruByIndex(el, prop, 2);
+		r=searchThruByIndex(el, prop, 2);
 	}else if (srch.startsWith("ROOM")){
-		return searchThruByIndex(el, prop, 15);
+		r=searchThruByIndex(el, prop, 15);
+	}else if (srch.startsWith("CODE")){
+        let props=prop.split(" ");
+        if (props.length==1) r= searchThruByIndex(el, prop.substring(0,3), 2) && searchThruByIndex(el, prop.substring(3,5), 3);
+        if (props.length==2) r= searchThruByIndex(el, props[0], 2) && searchThruByIndex(el, props[1], 3);		
 	}else if (srch.startsWith("TIME")){
-		return searchThruByIndex(el, prop, 11) || searchThruByIndex(el, prop, 12);
+		r= searchThruByIndex(el, prop, 11) || searchThruByIndex(el, prop, 12);
 	}
-	return false;
+    if (r)t++;
+}
+	return (sArray.length==t);
 }
 //id=0, Line=1, Department=2, Number=3, Section=4, Title=5, Faculty=6, Openings=7, Capacity=8, Status=9. Day=10, StartTime=11, EndTime=12, Campus=13, Building=14, Room=15, Credits=16, Start Date=17, End Date=18, Rating=19
 function loadDetails(){
@@ -251,6 +271,9 @@ function getDays(days){
         str += t+ ", "
     }
     return replaceLast(str.slice(0,-2),","," and");
+}
+function reverse(str){
+    return str.split("").reverse().join("");
 }
 function replaceLast(string, oldPhrase, newPhrase) {
     let lastIndex = string.lastIndexOf(oldPhrase);    

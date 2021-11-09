@@ -182,9 +182,9 @@ function loadDetails(){
         if (http.status >= 200 && http.status < 300) {
             //document.getElementById("info").innerHTML=(http.responseText);
             results=JSON.parse(http.response);
-    document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ " is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0] + " in "+ " " + results.Room + " on "+ results.Campus;//Object.values(results);
+    document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ formatProf(results) + formatRoom(results);//Object.values(results);
     document.getElementById("Title").innerHTML=results.Title;
-    document.getElementById("time").innerHTML="Meets "+ getDays(results.Day) + " from " + formatText(results.StartTime) + " to " + formatText(results.EndTime);
+    document.getElementById("time").innerHTML=formatTime(results);
     if (results.Credits==1) document.getElementById("credits").innerHTML=results.Credits + " Credit"; else document.getElementById("credits").innerHTML=results.Credits + " Credits";
     document.getElementById("rate").innerHTML=""+ results.Rating+ " out of 5 Rating";
     document.getElementById("rate").style.background="linear-gradient(90deg, rgb(184,107,43) "+ ((parseInt(results.Rating)/5)*100) +"%, rgb(136,86,46) 20%)";
@@ -193,10 +193,32 @@ function loadDetails(){
     document.getElementById("startDay").innerHTML=getMonth(results["Start Date"].split('-')[1]) + " "+ getEnd(results["Start Date"].split('-')[2]) + ", " + results["Start Date"].split('-')[0];
     document.getElementById("endDay").innerHTML=getMonth(results["End Date"].split('-')[1]) + " "+ getEnd(results["End Date"].split('-')[2]) + ", " + results["End Date"].split('-')[0];
     //document.getElementById("prof2").innerHTML=Object.values(results);*/
-    generateSched(results);
+    if (results.Day!="BY APPT") generateSched(results);
     document.getElementById("bod").classList.remove("Hide");
         }
     };
+}
+function formatProf(r){
+    let str="", fac=r.Faculty.split(' ');
+    console.log(r.Faculty);
+    for (let base=0; base<fac.length;base+=3){
+        console.log(base);
+        if ((fac.length-base)%3==0)str+=fac[base+1]+ " " + fac[base+2]+ " " + fac[base].substring(0,fac[base].length-1)+", ";else str+=fac[base+1]+ " " + fac[base].substring(0,fac[base].length-1)+", ";
+        ;// +" "+ r.Faculty.split(' ')[base+2] + " "  + r.Faculty.split(',')[base+0] +", "
+    }
+    console.log(str);
+    //" is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0]
+    return " is taught by " + replaceLast(str.slice(0,-2),","," and");
+}
+function formatTime(r){
+    if (r.Day=="BY APPT") return "This class is only avalible by appointment"
+    return "Meets "+ getDays(r.Day) + " from " + formatText(r.StartTime) + " to " + formatText(r.EndTime);
+}
+function formatRoom(r){
+    let str="";
+    if (r.Room!=null)str+= " in "+ " " + r.Room
+    if (r.Campus!=null)str+= " at "+ r.Campus;
+    return str;
 }
 function getEnd(number){
     if (number.last=="1") return number + "st";

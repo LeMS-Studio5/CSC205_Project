@@ -46,6 +46,7 @@ a:active {
 	background-color: white;
 	border: 0;
 	opacity: 1;
+	z-index: 1;
 }
 #overlayBack{
 	position: fixed;
@@ -91,6 +92,15 @@ a:active {
 }
 #advTBL button{
 	margin:5px;
+}
+#close {
+	position: absolute;
+	width:20px;
+	top:7%;
+	right:7%;
+	z-index: 100;
+	opacity: 1;
+	cursor: pointer;
 }
 .Hide {
 	display: none;

@@ -138,9 +138,11 @@ function addCourse(courseCode){//To be implemented...
     ifrm.setAttribute("id","overlay");
     document.getElementById("bod").appendChild(ifrm)
     document.getElementById("overlayBack").style.display = "block";
+    document.getElementById("close").style.display = "block";
 }
 function hideOverlay(el){
     document.getElementById("overlayBack").style.display = "none";
+    document.getElementById("close").style.display = "none";
     ifrm.parentNode.removeChild(ifrm);
 }
 function find(data,srch){//Finds text from data and returns listing if contains srch

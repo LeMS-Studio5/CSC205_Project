@@ -48,7 +48,7 @@ function getCourseData(){
          courses = JSON.parse(http.responseText);
          //console.log(http.responseText);
          //Department Number Section Title Faculty Day StartTime EndTime Building Room Credits Start Date End Date Status	
-         viewableRows=[2,3,4,5,6,10,11,12,14,15,16,17,18,9];
+         viewableRows=[2,3,4,5,6,11,12,13,15,16,17,18,19,10];
         }
         let table = document.getElementById("sortable");// Create the table header        
         let data = Object.keys(courses[0]);
@@ -174,17 +174,17 @@ function advanceSearch(el, s){
         //console.log(prop);
 		r=searchThruByIndex(el, prop, 6);
 	}else if (srch.startsWith("DAY")){
-		r=searchThruByIndex(el, prop, 10);
+		r=searchThruByIndex(el, prop, 11);
 	}else if (srch.startsWith("DEPT")){
 		r=searchThruByIndex(el, prop, 2);
 	}else if (srch.startsWith("ROOM")){
-		r=searchThruByIndex(el, prop, 15);
+		r=searchThruByIndex(el, prop, 16);
 	}else if (srch.startsWith("CODE")){
         let props=prop.split(" ");
         if (props.length==1) r= searchThruByIndex(el, prop.substring(0,3), 2) && searchThruByIndex(el, prop.substring(3,5), 3);
         if (props.length==2) r= searchThruByIndex(el, props[0], 2) && searchThruByIndex(el, props[1], 3);		
 	}else if (srch.startsWith("TIME")){
-		r= searchThruByIndex(el, prop, 11) || searchThruByIndex(el, prop, 12);
+		r= searchThruByIndex(el, prop, 12) || searchThruByIndex(el, prop, 13);
 	}
     if (r)t++;
 }
@@ -220,15 +220,15 @@ function loadDetails(){
 }
 function formatProf(r){
     let str="", fac=r.Faculty.split(' ');
-    console.log(r.Faculty);
+    console.log(r.Email);
     for (let base=0; base<fac.length;base+=3){
         console.log(base);
         if ((fac.length-base)%3==0)str+=fac[base+1]+ " " + fac[base+2]+ " " + fac[base].substring(0,fac[base].length-1)+", ";else str+=fac[base+1]+ " " + fac[base].substring(0,fac[base].length-1)+", ";
         ;// +" "+ r.Faculty.split(' ')[base+2] + " "  + r.Faculty.split(',')[base+0] +", "
     }
-    console.log(str);
+    //console.log(str);
     //" is taught by " + results.Faculty.split(' ')[1] +" " + results.Faculty.split(',')[0]
-    return " is taught by " + replaceLast(str.slice(0,-2),","," and");
+    return " is taught by <a href='mailto:" + r.Email + "'>" + replaceLast(str.slice(0,-2),","," and") + "</a>";
 }
 function formatTime(r){
     if (r.Day=="BY APPT") return "This class is only avalible by appointment"

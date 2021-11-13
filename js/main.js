@@ -9,6 +9,7 @@
  */
 let viewableRows=[1,2,3,4,5,9,10,11,13,14,15,16,17,8];
 let RowPriority =[12,12,3,5,4,9,10,8,2,6,7,1,1,11];
+let coursesTaking=[];
 let ifrm;
 let courses = [
     {"Line":81,"Department":"BUS","Number":344,"Section":1,"Title":"MANAGEMENT OF INFORMATION SYSTEMS","Faculty":"Richards, Gordon P.","Openings":2,"Capacity":30,"Status":"Open","Day":"MWF","StartTime":"1:25 PM","EndTime":"2:20 PM","Campus":" Main Campus","Building":" Science and Engineering","Room":" SE 341 Computer Science Lab","Credits":3,"Start Date":"8\/30\/2021","End Date":"12\/17\/2021\r\n"}
@@ -40,25 +41,17 @@ function aSearch(){
     generateTable(document.getElementById("sortable"), courses, srch,  document.getElementById("hideFull").checked);
 }
 function getCourseData(){
-    http=new XMLHttpRequest();
-    http.open("GET", "https://csc205.cscprof.com/courses", true);
-    http.send();
-    http.onload = function() {
-        if (http.status >= 200 && http.status < 300) {
-         courses = JSON.parse(http.responseText);
-         //console.log(http.responseText);
-         //Department Number Section Title Faculty Day StartTime EndTime Building Room Credits Start Date End Date Status	
-         viewableRows=[2,3,4,5,6,11,12,13,15,16,17,18,19,10];
-        }
-        let table = document.getElementById("sortable");// Create the table header        
-        let data = Object.keys(courses[0]);
-        document.getElementById("Loading").classList.add("Hide");
-        generateTableHead(table, data);
-        generateTable(table, courses, "*",  document.getElementById("hideFull").checked);// Fill the data rows
-	    document.getElementById("search").focus();
-        console.log('The page is loaded. We are in the console');// Log a message to the console to show that you can use this for debugging purposes
-		//console.log(Object.values(courses));
-    };
+    courses = getServerData("https://csc205.cscprof.com/courses");
+    //console.log(http.responseText);
+    //Department Number Section Title Faculty Day StartTime EndTime Building Room Credits Start Date End Date Status	
+    viewableRows=[2,3,4,5,6,11,12,13,15,16,17,18,19,10];
+    let table = document.getElementById("sortable");// Create the table header        
+    let data = Object.keys(courses[0]);
+    document.getElementById("Loading").classList.add("Hide");
+    generateTableHead(table, data);
+    generateTable(table, courses, "*",  document.getElementById("hideFull").checked);// Fill the data rows
+	document.getElementById("search").focus();
+    //console.log(Object.values(courses));
 }
 function clickPress(event) {
     if (event.keyCode == 13) {
@@ -73,7 +66,7 @@ function generateTableHeadArray(table, heads, sortable) {
     for (let R of heads) {// Add the text to the table
         //console.log(R);
         let th = document.createElement("th");
-        if (sortable)th.setAttribute("onclick", "sortBy("+headIndex + ")");
+        if (sortable)th.setAttribute("onclick", "if (typeof sortBy === 'function') sortBy("+headIndex + ")");
         th.setAttribute("id", headIndex);
         if (sortable) th.classList.add("priority-" + RowPriority[headIndex]);
         let text = document.createTextNode(R);
@@ -100,7 +93,7 @@ function generateTable(table, data, searchStr, hideFull) {// Generate the data
     //console.log(dat);
     let tbody = document.getElementById('tabBody');// Create the tbody as part of the table
     tbody.innerHTML='';
-    clearFormat();
+    if (typeof clearFormat === "function") clearFormat();
     for (let element of dat) {// Loop through the rows of data
     	if (!(hideFull && element.Status=="Full")){
         	let row = tbody.insertRow();// Create a new row in the tbody
@@ -114,7 +107,7 @@ function generateTable(table, data, searchStr, hideFull) {// Generate the data
 	            headIndex+=1;
 	            //console.log(cell.classList);
 	        }
-	        let cmd = "addCourse('" + Object.values(element)[0] + "')";
+	        let cmd = "detailsCourse('details.html?"+ Object.values(element)[0] + "')";
 	        //console.log(element.Title+ element.id);
 	        row.insertCell().innerHTML="<input type='submit' value='Details' class='Add' onclick=" + cmd + ">";
 		}
@@ -132,17 +125,31 @@ function formatText(txt){   //Format's time and Null
     }else if (txt==null) return "NULL";
     return txt;
 }
-function addCourse(courseCode){//To be implemented...
+function addCourse(){
+    let i=document.getElementById("overlay").src.split('?')[1];
+    if (document.getElementById("Add").value=="Add Class") coursesTaking.push(i); else coursesTaking.splice(coursesTaking.indexOf(i),1);
+}
+function detailsCourse(add){
+    if (coursesTaking.length>0){if (coursesTaking.includes(add.split('?')[1])) document.getElementById("Add").value="Drop Class";else document.getElementById("Add").value="Add Class";}
+    prepOver(add,false);
+}
+function prepOver(add,hideAddBtn){
     ifrm = document.createElement("iframe");
-    ifrm.setAttribute("src","details.html?"+courseCode);
+    ifrm.setAttribute("src",add);
     ifrm.setAttribute("id","overlay");
     document.getElementById("bod").appendChild(ifrm)
-    document.getElementById("overlayBack").style.display = "block";
-    document.getElementById("close").style.display = "block";
+    invertHidden(hideAddBtn);
+}
+function current(){
+    prepOver("current.html?"+ coursesTaking,true);
+}
+function invertHidden(hideAdd){
+    document.getElementById("close").classList.toggle("Hide");
+    document.getElementById("overlayBack").classList.toggle("Hide");
+    if (document.getElementById("Add")!=null) document.getElementById("Add").classList.toggle("Hide",hideAdd);
 }
 function hideOverlay(el){
-    document.getElementById("overlayBack").style.display = "none";
-    document.getElementById("close").style.display = "none";
+    invertHidden(true);
     ifrm.parentNode.removeChild(ifrm);
 }
 function find(data,srch){//Finds text from data and returns listing if contains srch
@@ -194,16 +201,10 @@ function advanceSearch(el, s){
 }
 //id=0, Line=1, Department=2, Number=3, Section=4, Title=5, Faculty=6, Openings=7, Capacity=8, Status=9. Day=10, StartTime=11, EndTime=12, Campus=13, Building=14, Room=15, Credits=16, Start Date=17, End Date=18, Rating=19
 function loadDetails(){
-    let http=new XMLHttpRequest();
     let results;
     let courseIndex=502;
     if (location.search.length>1) courseIndex=location.search.substring(1);
-    http.open("GET", "https://csc205.cscprof.com/courses/"+ courseIndex, true);
-    http.send();
-    http.onload = function() {
-        if (http.status >= 200 && http.status < 300) {
-            //document.getElementById("info").innerHTML=(http.responseText);
-            results=JSON.parse(http.response);
+    results=getServerData("https://csc205.cscprof.com/courses/"+ courseIndex);
     document.getElementById("code").innerHTML=results.Department+" "+results.Number + " " + results.Section+ formatProf(results) + formatRoom(results);//Object.values(results);
     document.getElementById("Title").innerHTML=results.Title;
     document.getElementById("time").innerHTML=formatTime(results);
@@ -215,10 +216,14 @@ function loadDetails(){
     document.getElementById("startDay").innerHTML=getMonth(results["Start Date"].split('-')[1]) + " "+ getEnd(results["Start Date"].split('-')[2]) + ", " + results["Start Date"].split('-')[0];
     document.getElementById("endDay").innerHTML=getMonth(results["End Date"].split('-')[1]) + " "+ getEnd(results["End Date"].split('-')[2]) + ", " + results["End Date"].split('-')[0];
     //document.getElementById("prof2").innerHTML=Object.values(results);*/
-    if (results.Day!="BY APPT") generateSched(results);
+    if (results.Day!="BY APPT"){ generateSched();fillSchedule(results);}
     document.getElementById("bod").classList.remove("Hide");
-        }
-    };
+}
+function getServerData(address){
+    let http=new XMLHttpRequest();
+    http.open("GET", address, false);
+    http.send();
+    return JSON.parse(http.response);
 }
 function formatProf(r){
     let str="", fac=r.Faculty.split(' ');
@@ -282,7 +287,7 @@ function replaceLast(string, oldPhrase, newPhrase) {
     if (lastIndex == -1)return string;
     return string.substring(0, lastIndex) + newPhrase + string.substring(lastIndex + oldPhrase.length);
 }
-function generateSched(course) {
+function generateSched() {
     let schedtable = document.getElementById('schedTab');// Create the tbody as part of the table
     let days = ["Time","Monday","Tuesday","Wednesday","Thursday","Friday"];
     let D=["","M","T","W","H","F"]
@@ -300,16 +305,23 @@ function generateSched(course) {
             //cell.innerHTML=days[j] + " " + Math.floor(i/60).toString().padStart(2,"0") + ":" + (i%60).toString().padEnd(2,"0");//(text);// Add the text content to the cell
             cell.id = D[j].substring(0,1) + Math.floor(i/60).toString().padStart(2,"0") + (i%60).toString().padStart(2,"0");//days[j] + i;
             //console.log(days[j] + i);
+            //cell.classList.add("tooltip");
             if (i%60 ==0) cell.classList.add("oclock");
         }
     }
+    }
+function fillSchedule(course) {
+    let col ="FFFFFF"
+    while(col=="FFFFFF") col= Math.floor(course.id*16215).toString(16);
     for (let d of course.Day){
         let curHour=parseInt(course.StartTime.substring(0,2));
         let CurMin=parseInt(course.StartTime.substring(3,5));
         let ETime = course.EndTime.substring(0,2) + course.EndTime.substring(3,5);
         do{
             //console.log(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0"));
-            document.getElementById(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")).classList.toggle("sched");
+            document.getElementById(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")).style.backgroundColor = "#" + col;
+            document.getElementById(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")).classList.add("tooltip");
+            document.getElementById(d+curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")).innerHTML='<span class="tooltiptext">'+ course.Title + '</span>';// + course.Title+ '</span>';
             CurMin +=5;
             if (CurMin==60){
                 CurMin=0;
@@ -318,5 +330,28 @@ function generateSched(course) {
             //console.log(curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")+ "|" + ETime);
         }while(curHour.toString().padStart(2,"0")+CurMin.toString().padStart(2,"0")!= ETime)
          }
-         console.log(course);
+         return "#"+col;
+}
+function getCurrent() {
+    generateSched();
+    let c=[],tbl=document.getElementById("sortable"),colour=[],cred=0;
+    if (location.search!=""){
+    for (i of location.search.substring(1).split(",")){
+        let r=getServerData("https://csc205.cscprof.com/courses/"+ i);
+        if (r.Day!="BY APPT") colour.push(fillSchedule(r));else colour.push(null);
+        c.push(r);
+        cred+=r.Credits;
     }
+    viewableRows=[2,3,4,5,6,11,12,13,15,16,17,18,19];
+    generateTableHead(tbl,Object.keys(c[0]),true)
+    generateTable(tbl,c,"*");
+    colRows(tbl,colour);
+    tbl.rows[0].style.cursor="default";
+    if (cred==1)document.getElementById("resultCount").innerHTML= cred +" Credit";else document.getElementById("resultCount").innerHTML= cred +" Credits";
+}
+}
+function colRows(tab,colArr){
+    for(let i=0;i<colArr.length;i++){
+        tab.rows[i+1].style.backgroundColor=colArr[i];
+    }
+}

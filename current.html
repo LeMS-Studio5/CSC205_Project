@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Current Course</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/custom.css">
+    </head>
+<body style="text-align:center;" id="bod" onload="getCurrent()">
+    <div id="overlayBack" onclick="hideOverlay()" class="Hide"></div>
+    <img src="images/close.png" id="close" class="Hide" onclick="hideOverlay()"/>
+    <h1>Class Schedule</h1>
+    <table id="schedTab" border="0"  align="center"></table>
+    <table border='0' id="sortable" align="center"><caption id="resultCount"></caption><tbody id='tabBody'></tbody></table>
+    <h2 id="noResults" class="Hide">There is no results that match the search</h2>
+</body>
+<script type="text/javascript" src="js/main.js"></script>
+</html>

@@ -7,8 +7,9 @@
             <link rel="stylesheet" href="css/custom.css">
         </head>
         <body id="bod" onload="getCourseData();">
-            <div id="overlayBack" onclick="hideOverlay()"></div>
+            <div id="overlayBack" onclick="hideOverlay()" class="Hide"></div>
             <img src="images/close.png" id="close" class="Hide" onclick="hideOverlay()"/>
+            <input type="button" id="Add" class="Hide" value="Add Class" onClick="addCourse()"/>
             <img id="logo-image" src="images/geneva_logo.png" alt="Geneva Logo">
             <h1>Geneva Course Catalog</h1>
             <p>Search: <input type="text" id="search" onkeypress="clickPress(event)"> <button type='submit' onclick="search();">Search</button></p>
@@ -22,6 +23,7 @@
                     </table>
                 </div>
             </form><!--p>Advance search functions to be added later</p>-->
+            <input type="button" value="Show Current Courses" id="current"onClick="current()">
             <h2 id='Loading'>Loading...</h2>
             <table border='0' id="sortable" align="center"><caption id="resultCount"></caption><tbody id='tabBody'></tbody></table>
             <h2 id="noResults" class="Hide">There is no results that match the search</h2>

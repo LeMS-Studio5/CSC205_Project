@@ -127,10 +127,10 @@ function formatText(txt){   //Format's time and Null
 }
 function addCourse(){
     let i=document.getElementById("overlay").src.split('?')[1];
-    if (document.getElementById("Add").value=="Add Class") coursesTaking.push(i); else coursesTaking.splice(coursesTaking.indexOf(i),1);
+    if (document.getElementById("Add").value=="Add Class") {coursesTaking.push(i); document.getElementById("Add").value="Drop Class";}else {coursesTaking.splice(coursesTaking.indexOf(i),1);document.getElementById("Add").value="Add Class";};
 }
 function detailsCourse(add){
-    if (coursesTaking.length>0){if (coursesTaking.includes(add.split('?')[1])) document.getElementById("Add").value="Drop Class";else document.getElementById("Add").value="Add Class";}
+    if (coursesTaking.includes(add.split('?')[1]))  document.getElementById("Add").value="Drop Class";else document.getElementById("Add").value="Add Class";
     prepOver(add,false);
 }
 function prepOver(add,hideAddBtn){
@@ -227,9 +227,7 @@ function getServerData(address){
 }
 function formatProf(r){
     let str="", fac=r.Faculty.split(' ');
-    console.log(r.Email);
     for (let base=0; base<fac.length;base+=3){
-        console.log(base);
         if ((fac.length-base)%3==0)str+=fac[base+1]+ " " + fac[base+2]+ " " + fac[base].substring(0,fac[base].length-1)+", ";else str+=fac[base+1]+ " " + fac[base].substring(0,fac[base].length-1)+", ";
         ;// +" "+ r.Faculty.split(' ')[base+2] + " "  + r.Faculty.split(',')[base+0] +", "
     }
@@ -342,13 +340,13 @@ function getCurrent() {
         c.push(r);
         cred+=r.Credits;
     }
+}
     viewableRows=[2,3,4,5,6,11,12,13,15,16,17,18,19];
-    generateTableHead(tbl,Object.keys(c[0]),true)
+    if(c.length>0) generateTableHead(tbl,Object.keys(c[0]),true);else generateTableHead(tbl,Object.keys(getServerData("https://csc205.cscprof.com/courses/502")),true);
     generateTable(tbl,c,"*");
     colRows(tbl,colour);
     tbl.rows[0].style.cursor="default";
     if (cred==1)document.getElementById("resultCount").innerHTML= cred +" Credit";else document.getElementById("resultCount").innerHTML= cred +" Credits";
-}
 }
 function colRows(tab,colArr){
     for(let i=0;i<colArr.length;i++){

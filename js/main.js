@@ -130,7 +130,7 @@ function addCourse(){
     if (document.getElementById("Add").value=="Add Class") {coursesTaking.push(i); document.getElementById("Add").value="Drop Class";}else {coursesTaking.splice(coursesTaking.indexOf(i),1);document.getElementById("Add").value="Add Class";};
 }
 function detailsCourse(add){
-    if (coursesTaking.includes(add.split('?')[1]))  document.getElementById("Add").value="Drop Class";else document.getElementById("Add").value="Add Class";
+    if (document.getElementById("Add")!=null){if (coursesTaking.includes(add.split('?')[1]))  document.getElementById("Add").value="Drop Class";else document.getElementById("Add").value="Add Class";}
     prepOver(add,false);
 }
 function prepOver(add,hideAddBtn){

@@ -37,11 +37,11 @@ a:active {
     height: 70px; 
 }
 #overlay{
-	width: 94%;
+	width: 96%;
 	position: fixed;
 	top:2%;
 	left:2%;
-	height: 94%;
+	height: 96%;
 	background-color: white;
 	border: 0;
 	opacity: 1;
@@ -95,8 +95,8 @@ a:active {
 #close {
 	position: fixed;
 	width:20px;
-	top:7%;
-	right:7%;
+	top:2%;
+	right:2%;
 	z-index: 100;
 	opacity: 1;
 	cursor: pointer;
